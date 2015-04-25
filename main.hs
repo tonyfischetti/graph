@@ -6,7 +6,8 @@ import Data.Map
 (|>) x f = f x
 
 
-main = print $ (Node "hi" empty) == (Node "hi" (fromList [("key", "value")]))
+main = print $ Graph [(qnode "this"), (qnode "that"), (qnode "theother")]
+                     [(qedge 0 1 1), (qedge 1 2 1)]
       
 
 
