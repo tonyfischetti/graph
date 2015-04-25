@@ -6,8 +6,11 @@ import Data.Map
 (|>) x f = f x
 
 
-main = print $ Graph [(qnode "this"), (qnode "that"), (qnode "theother")]
-                     [(qedge 0 1 1), (qedge 1 2 1)]
+main = Graph [(qnode "this"), (qnode "that"), (qnode "theother")] [] |>
+        addNode (qnode "onemore") |>
+        addEdgeFromNames "that" "theother" 1 |>
+        addEdgeFromNames "theother" "onemore" 1 |>
+        print
       
 
 

@@ -2,16 +2,13 @@ module Graph where
 
 
 import qualified Data.Map as M
+import Data.List
 
 -- import Data.Char
--- import Data.List
 
 
 -- dont export
 -- edgeTemplate, showEdgeWithNames
-
-
-
 
 
 
@@ -30,9 +27,6 @@ instance Eq Node where
 -- returns Node with empty attribute map
 qnode :: String -> Node
 qnode s = Node s M.empty
-
-nameAtIndex :: Graph -> Index -> String
-nameAtIndex g i  = name $ (nodes g) !! i
 
 
 ------------------
@@ -66,7 +60,7 @@ instance Eq Edge where
 qedge :: Index -> Index -> Weight -> Edge
 qedge f t w = Edge f t w M.empty
 
-
+--------------------------------------------
 
 
 -------------------
@@ -81,20 +75,59 @@ instance Show Graph where
             (unlines . (map (showEdgeWithNames graph))) edges ++
             "  </Edges>\n</Graph>\n"
 
+egraph = Graph [] []
+
+--------------------------------------------
 
 
 
+------------------------------
+----   Graph Operations   ----
+------------------------------
+nameAtIndex :: Graph -> Index -> String
+nameAtIndex g i  = name $ (nodes g) !! i
 
--- instance Show Graph where
---         show (Graph nodes edges) =
---             "Nodes:\n" ++ 
---             unlines (map (\x -> "    " ++ x) nodes) ++
---             "\nEdges:\n" ++
---             (unlines (map (\x -> "    " ++ x)
---                      (map (\(Edge x y z) -> (nodes !! x) ++
---                                             " -> " ++ (nodes !! y)) edges)))
---
---
+
+findNode :: Node -> Graph -> Maybe Int
+findNode node = elemIndex node . nodes
+
+
+findEdgeFromNames :: String -> String -> Graph -> Maybe Int
+findEdgeFromNames f t g = elemIndex (qedge (whereIs f) (whereIs t) 1) (edges g)
+    where whereIs s = getIndex s g
+
+
+getIndex :: String -> Graph -> Index
+getIndex name graph = case findNode (qnode name) graph of
+                          Just i  -> i
+                          Nothing -> error $ "no such node: " ++ name
+
+
+addNode :: Node -> Graph -> Graph
+addNode node graph
+    | any (== node) (nodes graph) = error "node already exists"
+    | otherwise                   = Graph (node : (nodes graph)) (edges graph)
+
+
+addEdgeFromNames :: String -> String -> Weight -> Graph -> Graph
+addEdgeFromNames f t w g = case findEdgeFromNames f t g of
+    Nothing -> Graph (nodes g) (newEdge : (edges g))
+    _       -> error "edge already exists"
+    where newEdge = (qedge (getIndex f g) (getIndex t g) w)
+
+
+--------------------------------------------
+
+
+
+-- addQEdge :: Node -> Node -> Weight -> Graph -> Graph
+-- addQEdge from to weight graph = case findEdge from to graph of
+--     Nothing -> Graph (nodes graph) (newEdge : (edges graph)) 
+--     _       -> error "edge already exists"
+--     where newEdge = (Edge (getIndex from graph) (getIndex to graph) weight)
+
+
+
 --
 --
 --
@@ -105,16 +138,7 @@ instance Show Graph where
 -- ---------------------
 -- ---- Edge things ----
 -- ---------------------
--- findEdge :: Node -> Node -> Graph -> Maybe Int
--- findEdge from to graph = findIndex (\(Edge x y _) -> x == (getIndex from graph) &&
---                                                      y == (getIndex to graph))
---                                                      (edges graph)
 --
--- addEdge :: Node -> Node -> Weight -> Graph -> Graph
--- addEdge from to weight graph = case findEdge from to graph of
---     Nothing -> Graph (nodes graph) (newEdge : (edges graph)) 
---     _       -> error "edge already exists"
---     where newEdge = (Edge (getIndex from graph) (getIndex to graph) weight)
 --
 -- removeEdge :: Node -> Node -> Graph -> Graph
 -- removeEdge from to graph = case findEdge from to graph of
@@ -127,16 +151,8 @@ instance Show Graph where
 -- ---------------------
 -- ---- Node things ----
 -- ---------------------
--- getIndex :: Node -> Graph -> Index
--- getIndex node graph = case findNode node graph of
---                           Just i  -> i
---                           Nothing -> error $ "no such node: " ++ node
 --                           --
--- findNode :: Node -> Graph -> Maybe Int
--- findNode node = elemIndex node . nodes
 --
--- addNode :: Node -> Graph -> Graph
--- addNode node graph = Graph (nodes graph ++ [node]) (edges graph)
 --
 --
 -- removeNode :: Node -> Graph -> Graph

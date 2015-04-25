@@ -1,0 +1,13 @@
+<Graph>
+  <Nodes>
+    <Node name="onemore">
+    <Node name="this">
+    <Node name="that">
+    <Node name="theother">
+  </Nodes>
+  <Edges>
+    <Edge from="theother" to="onemore" weight=1.0>
+    <Edge from="that" to="theother" weight=1.0>
+  </Edges>
+</Graph>
+
