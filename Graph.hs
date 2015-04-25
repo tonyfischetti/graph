@@ -7,13 +7,6 @@ module Graph (Node(..), qnode, Weight, Index, Edge(..), qedge, Graph(..),
 import qualified Data.Map as M
 import Data.List
 
--- import Data.Char
-
-
--- dont export
--- edgeTemplate, showEdgeWithNames
-
-
 
 ------------------
 ----   Node   ----
@@ -155,26 +148,25 @@ decrementIfHigherIndex i edge@(Edge from to weight attrs) =
 
 type Path = [Node]
 
--- assumes DAG
 topoSort :: Graph -> Path
 topoSort = reverse . gatherChildless
-
 
 getChildren :: Node -> Graph -> [Node]
 getChildren node g = map (\e -> nodeAtIndex g (toIndex e)) relavantEdges
     where loc = getIndex (name node) g
           relavantEdges = filter (\e -> (fromIndex e) == loc) (edges g)
 
-
 getChildless :: Graph -> [Node]
 getChildless g = filter (\n -> null (getChildren n g)) (nodes g)
-
-
 
 gatherChildless :: Graph -> [Node]
 gatherChildless g
     | null (nodes g) = []
     | otherwise = firstChildless : (gatherChildless
                                    (removeNodeByName (name firstChildless) g))
-    where firstChildless = head $ getChildless g
+    where firstChildless = if null childlessList
+                               then error "no topo sort exists"
+                               else head childlessList
+          childlessList = getChildless g
 
+--------------------------------------------

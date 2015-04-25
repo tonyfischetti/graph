@@ -21,4 +21,33 @@ myGraph = foldl (flip addNodeByName) egraph
                 addEdgeByNames "gamma" "theta" 8
 
 
-main = print $ topoSort myGraph
+otherGraph = egraph |>
+               addNodeByName "beta" |>
+               addNodeByName "omega" |>
+               addNodeByName "alpha" |>
+               addNodeByName "gamma" |>
+               addEdgeByNames "gamma" "omega" 1 |>
+               addEdgeByNames "beta" "alpha" 1 |>
+               addEdgeByNames "beta" "gamma" 1 |>
+               addEdgeByNames "omega" "alpha" 1
+
+simpleGraph = egraph |>
+                addNodeByName "central tendency" |>
+                addNodeByName "measures of dispersion" |>
+                addNodeByName "sampling theory" |>
+                addEdgeByNames "central tendency" "measures of dispersion" 7 |>
+                addEdgeByNames "measures of dispersion" "sampling theory" 8 |>
+                addEdgeByNames "central tendency" "sampling theory" 8
+
+nonDAGSimpleGraph = egraph |>
+                      addNodeByName "central tendency" |>
+                      addNodeByName "measures of dispersion" |>
+                      addNodeByName "sampling theory" |>
+                      addEdgeByNames "central tendency" "measures of dispersion" 7 |>
+                      addEdgeByNames "measures of dispersion" "sampling theory" 8 |>
+                      addEdgeByNames "central tendency" "sampling theory" 8 |>
+                      addEdgeByNames "sampling theory" "measures of dispersion" 1
+
+
+
+main = nonDAGSimpleGraph |> topoSort |> print
