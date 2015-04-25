@@ -6,10 +6,13 @@ import Data.Map
 (|>) x f = f x
 
 
-main = Graph [(qnode "this"), (qnode "that"), (qnode "theother")] [] |>
-        addNode (qnode "onemore") |>
-        addEdgeFromNames "that" "theother" 1 |>
-        addEdgeFromNames "theother" "onemore" 1 |>
+main = Graph [(qnode "b"), (qnode "c"), (qnode "d")] [] |>
+        addNode (qnode "a") |>
+        addEdgeByNames "a" "b" 1 |>
+        addEdgeByNames "b" "c" 1 |>
+        addEdgeByNames "c" "d" 1 |>
+        addEdgeByNames "d" "a" 1 |>
+        removeNodeByName "d" |>
         print
       
 

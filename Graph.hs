@@ -27,6 +27,7 @@ instance Eq Node where
 -- returns Node with empty attribute map
 qnode :: String -> Node
 qnode s = Node s M.empty
+--------------------------------------------
 
 
 ------------------
@@ -59,7 +60,6 @@ instance Eq Edge where
 -- returns Edge with empty attribute map
 qedge :: Index -> Index -> Weight -> Edge
 qedge f t w = Edge f t w M.empty
-
 --------------------------------------------
 
 
@@ -76,7 +76,6 @@ instance Show Graph where
             "  </Edges>\n</Graph>\n"
 
 egraph = Graph [] []
-
 --------------------------------------------
 
 
@@ -109,22 +108,42 @@ addNode node graph
     | otherwise                   = Graph (node : (nodes graph)) (edges graph)
 
 
-addEdgeFromNames :: String -> String -> Weight -> Graph -> Graph
-addEdgeFromNames f t w g = case findEdgeFromNames f t g of
+addEdgeByNames :: String -> String -> Weight -> Graph -> Graph
+addEdgeByNames f t w g = case findEdgeFromNames f t g of
     Nothing -> Graph (nodes g) (newEdge : (edges g))
     _       -> error "edge already exists"
     where newEdge = (qedge (getIndex f g) (getIndex t g) w)
+
+
+-- doesn't warn if edge doesn't exist
+removeEdgeByNames :: String -> String -> Graph -> Graph
+removeEdgeByNames f t g = Graph (nodes g)
+                            (filter (/= (qedge (whereIs f) (whereIs t) 1)) (edges g))
+    where whereIs s = getIndex s g
+
+
+removeNodeByName :: String -> Graph -> Graph
+removeNodeByName n g = Graph (filter (/= (qnode n)) (nodes g))
+                         (map (decrementIfHigherIndex loc)
+                              (removeConnectedEdges loc (edges g)))
+    where loc = getIndex n g
+
+removeConnectedEdges :: Index -> [Edge] -> [Edge]
+removeConnectedEdges i es = filter (not . (connectedTo i)) es
+
+connectedTo :: Index -> Edge -> Bool
+connectedTo index edge = (fromIndex edge == index) || (toIndex edge == index)
+
+decrementIfHigherIndex :: Index -> Edge -> Edge
+decrementIfHigherIndex i edge@(Edge from to weight attrs) =
+        Edge (decIfHigher from) (decIfHigher to) weight attrs
+    where decIfHigher j = if j > i then j-1 else j
 
 
 --------------------------------------------
 
 
 
--- addQEdge :: Node -> Node -> Weight -> Graph -> Graph
--- addQEdge from to weight graph = case findEdge from to graph of
---     Nothing -> Graph (nodes graph) (newEdge : (edges graph)) 
---     _       -> error "edge already exists"
---     where newEdge = (Edge (getIndex from graph) (getIndex to graph) weight)
 
 
 
@@ -135,25 +154,3 @@ addEdgeFromNames f t w g = case findEdgeFromNames f t g of
 -- removeAt i xs = ((init (fst splitted)) ++ (snd splitted))
 --     where splitted = splitAt (i+1) xs
 --
--- ---------------------
--- ---- Edge things ----
--- ---------------------
---
---
--- removeEdge :: Node -> Node -> Graph -> Graph
--- removeEdge from to graph = case findEdge from to graph of
---     Nothing -> error "edge doesn't exist"
---     Just n  -> Graph (nodes graph) $ removeAt n $ edges graph
---     
---
---
---
--- ---------------------
--- ---- Node things ----
--- ---------------------
---                           --
---
---
---
--- removeNode :: Node -> Graph -> Graph
--- removeNode node graph = Graph (removeAt (getIndex node graph) (nodes graph)) (edges graph)
