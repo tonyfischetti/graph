@@ -1,29 +1,24 @@
 
 import Graph
-import Data.Map
+import qualified Data.Map as M
 
 
 (|>) x f = f x
 
 
-main = Graph [(qnode "b"), (qnode "c"), (qnode "d")] [] |>
-        addNode (qnode "a") |>
-        addEdgeByNames "a" "b" 1 |>
-        addEdgeByNames "b" "c" 1 |>
-        addEdgeByNames "c" "d" 1 |>
-        addEdgeByNames "d" "a" 1 |>
-        removeNodeByName "d" |>
-        print
-      
+
+myGraph = foldl (flip addNodeByName) egraph
+             (reverse ["theta", "eta", "zeta",
+                       "epsilon", "delta", "gamma",
+                       "beta", "alpha"]) |>
+                addEdgeByNames "alpha" "delta" 1 |>
+                addEdgeByNames "beta" "delta" 2 |>
+                addEdgeByNames "gamma" "epsilon" 3 |>
+                addEdgeByNames "delta" "zeta" 4 |>
+                addEdgeByNames "delta" "eta" 5 |>
+                addEdgeByNames "delta" "theta" 6 |>
+                addEdgeByNames "epsilon" "eta" 7 |>
+                addEdgeByNames "gamma" "theta" 8
 
 
--- main = print $ foldl (flip addNode) graph (reverse ["theta", "eta", "zeta",
---                                                   "epsilon", "delta", "gamma",
---                                                   "beta", "alpha"]) |>
---                 addEdge "alpha" "beta" 10 |>
---                 addEdge "beta" "gamma" 4 |>
---                 addEdge "gamma" "delta" 5 |>
---                 addEdge "delta" "epsilon" 5 |>
---                 addEdge "epsilon" "zeta" 5 |>
---                 addNode "omega" |>
---                 removeNode "delta"
+main = print $ topoSort myGraph

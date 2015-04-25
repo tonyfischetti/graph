@@ -1,4 +1,7 @@
-module Graph where
+module Graph (Node(..), qnode, Weight, Index, Edge(..), qedge, Graph(..),
+              egraph, addNode, addNodeByName,  addEdgeByNames,
+              removeEdgeByNames, removeNodeByName,
+              getChildren, topoSort)  where
 
 
 import qualified Data.Map as M
@@ -84,28 +87,30 @@ egraph = Graph [] []
 ----   Graph Operations   ----
 ------------------------------
 nameAtIndex :: Graph -> Index -> String
-nameAtIndex g i  = name $ (nodes g) !! i
+nameAtIndex g i = name $ nodeAtIndex g i
 
+nodeAtIndex :: Graph -> Index -> Node
+nodeAtIndex g i = (nodes g) !! i
 
 findNode :: Node -> Graph -> Maybe Int
 findNode node = elemIndex node . nodes
 
-
 findEdgeFromNames :: String -> String -> Graph -> Maybe Int
 findEdgeFromNames f t g = elemIndex (qedge (whereIs f) (whereIs t) 1) (edges g)
     where whereIs s = getIndex s g
-
 
 getIndex :: String -> Graph -> Index
 getIndex name graph = case findNode (qnode name) graph of
                           Just i  -> i
                           Nothing -> error $ "no such node: " ++ name
 
-
 addNode :: Node -> Graph -> Graph
 addNode node graph
     | any (== node) (nodes graph) = error "node already exists"
     | otherwise                   = Graph (node : (nodes graph)) (edges graph)
+
+addNodeByName :: String -> Graph -> Graph
+addNodeByName n g = Graph ((qnode n):(nodes g)) (edges g)
 
 
 addEdgeByNames :: String -> String -> Weight -> Graph -> Graph
@@ -114,13 +119,11 @@ addEdgeByNames f t w g = case findEdgeFromNames f t g of
     _       -> error "edge already exists"
     where newEdge = (qedge (getIndex f g) (getIndex t g) w)
 
-
 -- doesn't warn if edge doesn't exist
 removeEdgeByNames :: String -> String -> Graph -> Graph
 removeEdgeByNames f t g = Graph (nodes g)
                             (filter (/= (qedge (whereIs f) (whereIs t) 1)) (edges g))
     where whereIs s = getIndex s g
-
 
 removeNodeByName :: String -> Graph -> Graph
 removeNodeByName n g = Graph (filter (/= (qnode n)) (nodes g))
@@ -139,7 +142,6 @@ decrementIfHigherIndex i edge@(Edge from to weight attrs) =
         Edge (decIfHigher from) (decIfHigher to) weight attrs
     where decIfHigher j = if j > i then j-1 else j
 
-
 --------------------------------------------
 
 
@@ -147,10 +149,32 @@ decrementIfHigherIndex i edge@(Edge from to weight attrs) =
 
 
 
---
---
---
--- removeAt :: Int -> [a] -> [a]
--- removeAt i xs = ((init (fst splitted)) ++ (snd splitted))
---     where splitted = splitAt (i+1) xs
---
+------------------------------
+----   Graph Algorithms   ----
+------------------------------
+
+type Path = [Node]
+
+-- assumes DAG
+topoSort :: Graph -> Path
+topoSort = reverse . gatherChildless
+
+
+getChildren :: Node -> Graph -> [Node]
+getChildren node g = map (\e -> nodeAtIndex g (toIndex e)) relavantEdges
+    where loc = getIndex (name node) g
+          relavantEdges = filter (\e -> (fromIndex e) == loc) (edges g)
+
+
+getChildless :: Graph -> [Node]
+getChildless g = filter (\n -> null (getChildren n g)) (nodes g)
+
+
+
+gatherChildless :: Graph -> [Node]
+gatherChildless g
+    | null (nodes g) = []
+    | otherwise = firstChildless : (gatherChildless
+                                   (removeNodeByName (name firstChildless) g))
+    where firstChildless = head $ getChildless g
+

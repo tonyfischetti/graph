@@ -1,11 +1,11 @@
 ---
 sake version: 0.9.6
 files:
-  Graph.hi: {sha: c4ca74b9d0e318e1c16b00376491395d3961c82e}
-  Graph.hs: {sha: 8dfa938168f0847ed990acd2553a0694c0d717b7}
-  Graph.o: {sha: 041b55a225b6ffa4ac6debdf1c6d73361c008168}
-  driver: {sha: cd1ce496f73b66ec1bb8956f0a60e5b6ce3956e4}
-  main.hi: {sha: 0d5e87ecc4a2794c6737755ea69f9c50104e99dc}
-  main.hs: {sha: 8527a8fce6c37a9e9d8eec464bc963e333bea6d8}
-  main.o: {sha: 032be72202c566940ff66b41ca1032dac0591281}
+  Graph.hi: {sha: 367105c8b26c5de1480ba81af986a4038a1ec56b}
+  Graph.hs: {sha: dbf9505f26ba9c4e9f64742f3ca09e2c9e987735}
+  Graph.o: {sha: ddc85bb607dada7ce830c2aa52fc820565478c30}
+  driver: {sha: c6fca3625741e077c43565cbd6cfc4f463a2d955}
+  main.hi: {sha: 4f0899242ac9ad1d9a3332e043237d65d45d921f}
+  main.hs: {sha: 96e322daa9ca8d7f95becd70e44a0f79a6a0a395}
+  main.o: {sha: 20bdc2507757fba99d3ead1cbadf04447bdab894}
 ...
