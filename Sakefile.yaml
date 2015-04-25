@@ -1,0 +1,14 @@
+
+compile:
+    help: compile
+    dependencies:
+        - ./Graph.hs
+        - ./main.hs
+    formula: >
+        ghc -o driver main.hs
+    output:
+        - ./Graph.hi
+        - ./Graph.o
+        - ./main.hi
+        - ./main.o
+        - ./driver
