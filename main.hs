@@ -1,6 +1,9 @@
 
+
 import Graph
 import qualified Data.Map as M
+import Data.Function (on)
+import Data.List (sortBy)
 
 
 (|>) x f = f x
@@ -50,4 +53,35 @@ nonDAGSimpleGraph = egraph |>
 
 
 
-main = nonDAGSimpleGraph |> topoSort |> print
+mySimpleGraph = egraph |>
+    addNodeByName "alpha" |>
+    addNodeByName "beta" |>
+    addNodeByName "gamma" |>
+    addNodeByName "delta" |>
+    addNodeByName "epsilon" |>
+    addEdgeByNames "alpha" "beta" 1 |>
+    addEdgeByNames "alpha" "gamma" 1 |>
+    addEdgeByNames "beta" "delta" 1 |>
+    addEdgeByNames "gamma" "epsilon" 1
+
+
+mySimpleGraph2 = egraph |>
+    addNode (Node "alpha" $ M.fromList [("difficulty", "1")]) |>
+    addNode (Node "beta" $ M.fromList [("difficulty", "2")]) |>
+    addNode (Node "gamma" $ M.fromList [("difficulty", "3")]) |>
+    addNode (Node "delta" $ M.fromList [("difficulty", "6")]) |>
+    addNode (Node "epsilon" $ M.fromList [("difficulty", "4")]) |>
+    addEdgeByNames "alpha" "beta" 1 |>
+    addEdgeByNames "alpha" "gamma" 1 |>
+    addEdgeByNames "beta" "delta" 1 |>
+    addEdgeByNames "gamma" "epsilon" 1
+
+
+
+main = do
+        let paths = allTopoSorts mySimpleGraph2
+        print $ showPath $ getBestDifficultyProgression paths
+
+
+
+-- main = mapM print $ map showPath $ allTopoSorts mySimpleGraph2

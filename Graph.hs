@@ -1,11 +1,14 @@
 module Graph (Node(..), qnode, Weight, Index, Edge(..), qedge, Graph(..),
               egraph, addNode, addNodeByName,  addEdgeByNames,
               removeEdgeByNames, removeNodeByName,
-              getChildren, topoSort)  where
+              topoSort, allTopoSorts, showPath,
+              getDifficulties, sumBackwardsSteps,
+              getBestDifficultyProgression)  where
 
 
 import qualified Data.Map as M
 import Data.List
+import Data.Function (on)
 
 
 ------------------
@@ -49,6 +52,7 @@ showEdgeWithNames :: Graph -> Edge -> String
 showEdgeWithNames g edge@(Edge f t w _) = edgeTemplate (nameAtIndex g f)
                                                        (nameAtIndex g t) w
 
+
 -- edges are equal if endpoints are equal
 instance Eq Edge where
         x == y = (fromIndex x) == (fromIndex y) && (toIndex x) == (toIndex y)
@@ -74,6 +78,17 @@ instance Show Graph where
 egraph = Graph [] []
 --------------------------------------------
 
+
+
+
+------------------
+----   Path   ----
+------------------
+type Path = [Node]
+
+showPath :: Path -> String
+showPath = drop 4 . concat . map (\n -> " -> " ++ (name n))
+--------------------------------------------
 
 
 ------------------------------
@@ -139,14 +154,22 @@ decrementIfHigherIndex i edge@(Edge from to weight attrs) =
 
 
 
+getDifficulties :: Path -> [Int]
+getDifficulties = map (read . (M.findWithDefault "1" "difficulty") .  nattributes)
+
+
+sumBackwardsSteps :: [Int] -> Int
+sumBackwardsSteps diffs = sum $ filter (> 0) $ zipWith (-) (init diffs) (drop 1 diffs)
+
+getBestDifficultyProgression :: [Path] -> Path
+getBestDifficultyProgression paths = snd $ head $ sortBy (compare `on` fst) everyPath
+    where everyPath = zip (map (sumBackwardsSteps . getDifficulties) paths) paths
 
 
 
 ------------------------------
 ----   Graph Algorithms   ----
 ------------------------------
-
-type Path = [Node]
 
 topoSort :: Graph -> Path
 topoSort = reverse . gatherChildless
@@ -169,4 +192,21 @@ gatherChildless g
                                else head childlessList
           childlessList = getChildless g
 
+allTopoSorts :: Graph -> [Path]
+allTopoSorts g = if null result
+                     then error "no topo sort exists"
+                     else map fst result
+    where result = gatherAllChildless ([], g)
+
+gatherAllChildless :: (Path, Graph) -> [(Path, Graph)]
+gatherAllChildless (ns, g)
+    | null (nodes g) = [(ns, g)]
+    | otherwise = (map (\n -> ((n:ns), (removeNodeByName (name n) g)))
+                   childlessList) >>= gatherAllChildless
+    where childlessList = getChildless g
+
 --------------------------------------------
+
+
+
+
