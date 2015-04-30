@@ -1,9 +1,10 @@
 
 
 import Graph
-import qualified Data.Map as M
+import TopoSort
 import Data.Function (on)
 import Data.List (sortBy)
+import qualified Data.Map as M
 
 
 (|>) x f = f x
@@ -79,8 +80,7 @@ mySimpleGraph2 = egraph |>
 
 
 main = do
-        let paths = allTopoSorts mySimpleGraph2
-        print $ showPath $ getBestDifficultyProgression paths
+        print $ showPath $ difficultyTopoSort mySimpleGraph2
 
 
 
