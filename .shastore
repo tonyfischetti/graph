@@ -4,8 +4,8 @@ files:
   Graph.hi: {sha: 16663fd82fabf0361e8e55603581afbf662a7d18}
   Graph.hs: {sha: 0408eabe4ad2ea95ac310350e23414886f5cf82e}
   Graph.o: {sha: 3ac185726ab4e80ee3f8bf802a34c9b3eca2ea51}
-  driver: {sha: 60d30dec1e545e049ac2493aa83ba06809708f44}
+  driver: {sha: 98da6c3252ba485be3207454bdf504936f6c57c5}
   main.hi: {sha: fe5eb04a6d46b67da25da8017c799cb016374f44}
-  main.hs: {sha: 413c260c1c5054b72c35d39d34b3723ecc70f11c}
-  main.o: {sha: 2f77dab63bb67c8e8f345cf9d211f603fe26fbd8}
+  main.hs: {sha: 5ec7b1dbdb280c98eec2ae60fc775e3b1452c067}
+  main.o: {sha: 7241ba93afc11830ca33441ee49666d7888a3290}
 ...

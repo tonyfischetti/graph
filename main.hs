@@ -79,8 +79,33 @@ mySimpleGraph2 = egraph |>
 
 
 
+actualGraph = egraph |>
+    addNode (Node "central tendency" $ M.fromList [("difficulty", "1")]) |>
+    addNode (Node "measures of dispersion" $ M.fromList [("difficulty", "2")]) |>
+    addNode (Node "sampling theory" $ M.fromList [("difficulty", "3")]) |>
+    addNode (Node "sampling distributions" $ M.fromList [("difficulty", "3")]) |>
+    addNode (Node "central limit theorem" $ M.fromList [("difficulty", "5")]) |>
+    addNode (Node "probability" $ M.fromList [("difficulty", "4")]) |>
+    addNode (Node "probability distributions" $ M.fromList [("difficulty", "3")]) |>
+    addNode (Node "statistical inference" $ M.fromList [("difficulty", "5")]) |>
+    addNode (Node "NHST" $ M.fromList [("difficulty", "5")]) |>
+    addEdgeByNames "central tendency" "measures of dispersion" 7 |>
+    addEdgeByNames "central tendency" "sampling theory" 5 |>
+    addEdgeByNames "measures of dispersion" "sampling theory" 5 |>
+    addEdgeByNames "sampling theory" "sampling distributions" 7 |>
+    addEdgeByNames "sampling theory" "statistical inference" 5 |>
+    addEdgeByNames "sampling distributions" "statistical inference" 8 |>
+    addEdgeByNames "sampling distributions" "central limit theorem" 8 |>
+    addEdgeByNames "probability" "sampling distributions" 7 |>
+    addEdgeByNames "probability" "probability distributions" 8 |>
+    addEdgeByNames "probability" "central limit theorem" 2 |>
+    addEdgeByNames "probability" "statistical inference" 9 |>
+    addEdgeByNames "central limit theorem" "statistical inference" 3 |>
+    addEdgeByNames "statistical inference" "NHST" 9
+
+
 main = do
-        print $ showPath $ difficultyTopoSort mySimpleGraph2
+        print $ showPath $ difficultyTopoSort actualGraph
 
 
 
